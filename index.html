@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>École de Trail · Session Player</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <meta name="theme-color" content="#213b22" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700;800&family=Oswald:wght@500;700&display=swap" />
+    <link rel="stylesheet" href="https://cds-fleurier.github.io/0to100-session-player-app/styles.css?v=1.27.0" />
+    <link rel="stylesheet" href="edt.css?v=1.27.0" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero">
+        <img class="brand-logo" src="logo-edt-blanc.svg" alt="École de Trail" />
+      </section>
+
+      <section class="card input-card">
+        <h1>Session Player</h1>
+        <p>Choisis une séance, ou colle ta séance brute depuis Nolio.</p>
+
+        <div class="field">
+          <label class="field-label" for="sessionPicker">Séance</label>
+          <select id="sessionPicker" class="field-select">
+            <option value="" selected>Coller depuis Nolio</option>
+          </select>
+        </div>
+        <div id="sessionOptions" class="session-options"></div>
+
+        <div class="nolio-input">
+          <textarea
+            id="sessionInput"
+            rows="12"
+            spellcheck="false"
+            placeholder="Colle ta session ici"
+          ></textarea>
+          <div class="input-actions">
+            <button id="parseBtn">Générer la séance</button>
+            <button id="pasteNolioBtn" class="secondary-btn">Coller depuis Nolio</button>
+          </div>
+        </div>
+        <p id="parseStatus" class="status"></p>
+
+        <div class="settings">
+          <div class="settings-title">Réglages</div>
+          <label class="setting-row">
+            <span>Alertes vocales</span>
+            <input type="checkbox" id="voiceToggle" checked />
+          </label>
+          <label class="setting-row" for="voiceMode">
+            <span>Voix</span>
+            <select id="voiceMode" class="voice-picker">
+              <option value="female" selected>Femme</option>
+              <option value="male">Homme</option>
+            </select>
+          </label>
+          <label class="setting-row" for="metronomeMode">
+            <span>Métronome · 180 BPM</span>
+            <select id="metronomeMode" class="voice-picker">
+              <option value="off" selected>Off</option>
+              <option value="cadence">Passages cadence</option>
+              <option value="run">Toute la course</option>
+            </select>
+          </label>
+          <p id="metronomeHint" class="setting-hint" hidden></p>
+          <label class="setting-row">
+            <span>Sonner en mode silencieux<small class="setting-sub">Coupe la musique des autres apps (iPhone)</small></span>
+            <input type="checkbox" id="silentSwitchToggle" />
+          </label>
+        </div>
+      </section>
+
+      <section class="card plan-card">
+        <h2>Plan</h2>
+        <div id="sessionMeta" class="meta"></div>
+        <ol id="exerciseList"></ol>
+      </section>
+
+      <section class="card music-card" id="musicCard" style="display:none">
+        <h2>Musique</h2>
+        <div class="field">
+          <label class="field-label" for="musicGenre">Genre</label>
+          <select id="musicGenre" class="field-select">
+            <option value="none" selected>Sans musique</option>
+            <option value="motown">Motown / Soul</option>
+            <option value="hiphop">Hip-hop</option>
+            <option value="electro">Électro</option>
+            <option value="rock">Rock</option>
+            <option value="lofi">Lo-fi / Ambiant</option>
+            <option value="myriam">🔥 Spécial Myriam</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="musicPlatform">Écouter sur</label>
+          <select id="musicPlatform" class="field-select">
+            <option value="spotify">Spotify</option>
+            <option value="apple">Apple Music</option>
+            <option value="youtube">YouTube</option>
+            <option value="deezer">Deezer</option>
+          </select>
+        </div>
+        <div id="musicTracklist" class="music-tracklist"></div>
+        <p class="music-hint">Lance ta musique d'abord, puis appuie sur Démarrer.</p>
+      </section>
+
+      <section class="card player-card">
+        <h2>Player</h2>
+        <div class="phase" id="phaseLabel">Pret</div>
+        <div class="countdown" id="countdown">00</div>
+        <div class="now" id="currentLabel">Charge une séance</div>
+        <div class="next" id="nextLabel"></div>
+
+        <div class="controls">
+          <button id="startBtn" class="action-btn" disabled><span class="btn-icon">&#9654;</span>Demarrer</button>
+          <button id="pauseBtn" class="action-btn" disabled><span class="btn-icon">&#9208;</span>Pause</button>
+          <button id="resetBtn" class="action-btn" disabled><span class="btn-icon">&#9209;</span>Reset</button>
+          <button id="skipBlockBtn" class="action-btn"><span class="btn-icon">&#9193;</span>FWD</button>
+        </div>
+        <div class="controls utility-controls">
+          <button id="focusModeBtn" class="secondary-btn">Mode focus</button>
+          <button id="wakeLockBtn" class="secondary-btn">Écran actif: off</button>
+        </div>
+        <p id="wakeLockHint" class="setting-hint" hidden></p>
+        <div id="appVersion" class="app-version">v1.5.0</div>
+      </section>
+    </main>
+
+    <script>window.PLAYER_ASSET_BASE = "https://cds-fleurier.github.io/0to100-session-player-app/";</script>
+
+    <script src="https://cds-fleurier.github.io/0to100-session-player-app/music-library.js?v=1.27.0"></script>
+    <script src="https://cds-fleurier.github.io/0to100-session-player-app/sessions-library.js?v=1.27.0"></script>
+    <script src="https://cds-fleurier.github.io/0to100-session-player-app/voice/manifest.js?v=1.27.0"></script>
+    <script src="https://cds-fleurier.github.io/0to100-session-player-app/script.js?v=1.27.0"></script>
+  </body>
+</html>
